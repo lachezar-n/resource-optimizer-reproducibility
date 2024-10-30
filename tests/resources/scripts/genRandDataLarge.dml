@@ -1,0 +1,19 @@
+# This script generate the large (L) input datasets for the experiments for:
+# - L2SVM.dml - expected inputs matrix X (m,n) and vector (m, )
+# - Linreg.dml - expected inputs matrix X (m,n) and vector (m, )
+# - PCA.dml - expected inputs matrix X (m,n)
+# - PNMF.dml - expected inputs matrix X (m,n)
+#
+# The S dataset is defined as X matrix of size ~ 100GB
+# and dimensions m=500000; n=25000
+# and a corresponding Y vector with m=500000 rows
+
+outputFormat = ifdef($outputFormat, "csv");
+fileX = $outputDir + "largeX.csv";
+fileY = $outputDir + "largeY.csv";
+
+X = rand(rows=500000, cols=25000);
+Y = X %*% rand(rows=25000, cols=1);
+
+write(X, fileX, format=outputFormat);
+write(Y, fileY, format=outputFormat);

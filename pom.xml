@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.apache</groupId>
+		<artifactId>apache</artifactId>
+		<version>24</version>
+	</parent>
+
+    <groupId>com.example</groupId>
+    <artifactId>resource-optimizer-reproducibility</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss z</maven.build.timestamp.format>
+        <project.build.outputTimestamp>1</project.build.outputTimestamp>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.systemds</groupId>
+            <artifactId>systemds</artifactId>
+            <version>3.3.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jcuda</groupId>
+            <artifactId>jcuda</artifactId>
+            <version>10.2.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- always exclude recursive fetching of native libraries -->
+                    <groupId>org.jcuda</groupId>
+                    <artifactId>jcuda-natives</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jcuda</groupId>
+            <artifactId>jcublas</artifactId>
+            <version>10.2.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- always exclude recursive fetching of native libraries -->
+                    <groupId>org.jcuda</groupId>
+                    <artifactId>jcublas-natives</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jcuda</groupId>
+            <artifactId>jcusparse</artifactId>
+            <version>10.2.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- always exclude recursive fetching of native libraries -->
+                    <groupId>org.jcuda</groupId>
+                    <artifactId>jcusparse-natives</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jcuda</groupId>
+            <artifactId>jcusolver</artifactId>
+            <version>10.2.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- always exclude recursive fetching of native libraries -->
+                    <groupId>org.jcuda</groupId>
+                    <artifactId>jcusolver-natives</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jcuda</groupId>
+            <artifactId>jcudnn</artifactId>
+            <version>10.2.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- always exclude recursive fetching of native libraries -->
+                    <groupId>org.jcuda</groupId>
+                    <artifactId>jcudnn-natives</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>./systemds/src/main/java</sourceDirectory>
+        <testSourceDirectory>./tests</testSourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

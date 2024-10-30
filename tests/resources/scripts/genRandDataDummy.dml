@@ -1,0 +1,25 @@
+# This script generate the dummy input datasets for local tests:
+# - L2SVM.dml - expected inputs matrix X (m,n) and vector (m, )
+# - Linreg.dml - expected inputs matrix X (m,n) and vector (m, )
+# - PCA.dml - expected inputs matrix X (m,n)
+# - PNMF.dml - expected inputs matrix X (m,n)
+#
+# The dummy dataset is defined as X matrix of size ~ 800MB
+# and dimensions m=100000; n=1000
+# and a corresponding Y vector with m=100000 rows
+
+sparsity = ifdef($sparsity, 1.0);
+outputFormat = ifdef($outputFormat, "csv");
+# output dir is expected to be provided with final '/' symbol
+fileX = $outputDir + "dummyX.csv";
+fileY = $outputDir + "dummyY.csv";
+
+print("Generating matrix X");
+X = rand(rows=100000, cols=1000, sparsity=sparsity);
+print("Generate vector Y");
+Y = X %*% rand(rows=1000, cols=1, sparsity=sparsity);
+
+print("Writing the data to files with format "+outputFormat);
+write(X, fileX, format=outputFormat);
+write(Y, fileY, format=outputFormat);
+print("Data written successfully to directory: "+$outputDir);

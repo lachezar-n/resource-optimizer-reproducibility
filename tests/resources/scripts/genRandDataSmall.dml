@@ -1,0 +1,19 @@
+# This script generate the small (S) input datasets for the experiments for:
+# - L2SVM.dml - expected inputs matrix X (m,n) and vector (m, )
+# - Linreg.dml - expected inputs matrix X (m,n) and vector (m, )
+# - PCA.dml - expected inputs matrix X (m,n)
+# - PNMF.dml - expected inputs matrix X (m,n)
+#
+# The S dataset is defined as X matrix of size ~ 20GB
+# and dimensions m=250000; n=10000
+# and a corresponding Y vector with m=250000 rows
+
+outputFormat = ifdef($outputFormat, "csv");
+fileX = $outputDir + "smallX.csv";
+fileY = $outputDir + "smallY.csv";
+
+X = rand(rows=250000, cols=10000);
+Y = X %*% rand(rows=10000, cols=1);
+
+write(X, fileX, format=outputFormat);
+write(Y, fileY, format=outputFormat);

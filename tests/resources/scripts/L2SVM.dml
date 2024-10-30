@@ -1,0 +1,23 @@
+
+# Indicator if a bias column should be added to X and the model
+intercept = ifdef($intercept, 1);
+# Tolerance for early termination if the reduction of objective
+#   function is less than epsilon times the initial objective
+epsilon = ifdef($epsilon, 1e-6);
+# Regularization parameter (lambda) for L2 regularization
+reg = ifdef($reg, 0.01);
+# Maximum number of conjugate gradient (outer) iterations
+maxi = ifdef($maxi, 20);
+formatW = ifdef($formatW, "csv");
+
+# input matrix of feature vectors - (m samples, n features)
+X = read($fileX);
+# input vector - (m labels, )
+Y = read($fileY);
+
+
+w = l2svm(X=X, Y=Y, intercept=intercept, epsilon=epsilon, reg=reg, maxIterations=maxi);
+
+# calculated the weights vector - (n weights, )
+write(w, $fileW, format=formatW);
+

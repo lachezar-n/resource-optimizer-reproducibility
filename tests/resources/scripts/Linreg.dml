@@ -1,0 +1,24 @@
+
+# Intercept presence, shifting and rescaling the columns of X
+icpt = ifdef($ictp, 2);
+# Tolerance (epsilon); conjugate gradient procedure terminates early if L2
+#   norm of the beta-residual is less than tolerance * its initial norm
+tol = ifdef($tol, 1e-8);
+# Regularization constant (lambda) for L2-regularization. set to nonzero
+#   for highly dependant/sparse/numerous features
+reg = ifdef($reg, 0.1);
+# Maximum number of conjugate gradient iterations. 0 = no maximum
+maxi = ifdef($maxi,20);
+# Output file format
+formatW = ifdef($formatW, "csv");
+
+# input matrix of feature vectors - (m samples, n features)
+X = read($fileX);
+# input vector - (m response values, )
+Y = read($fileY);
+
+w = lm(X=X, y=Y, icpt=icpt, tol=tol, reg=reg, maxi=maxi);
+
+# calculate the coefficient vector - (n coeff., )
+write(w, $fileW, format=formatW);
+

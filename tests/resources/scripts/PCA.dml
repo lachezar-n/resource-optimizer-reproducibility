@@ -1,0 +1,21 @@
+
+# File format for all output matrices/vectors
+outputFormat = ifdef($outputFormat, "csv")
+
+# input matrix - (m sanples, n features);
+X = read($fileX);
+
+# use always 2 components
+[XReduced, C, C2, S2] = pca(X=X, center=TRUE, scale=TRUE);
+
+
+# Output feature matrix with K columns
+write(XReduced, $fileXReduced, format=outputFormat);
+# Components - Output dominant eigen vectors sorted by influence
+write(C, $fileC, format=outputFormat);
+# Centering - The column means of the input, subtracted to construct the PCA
+write(C2, $fileC2, format=outputFormat);
+# Scale factors - The scaling of the values, to make each dimension same size.
+write(S2, $fileS2, format=outputFormat);
+
+

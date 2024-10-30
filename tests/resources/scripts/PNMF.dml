@@ -1,0 +1,16 @@
+
+# Number of components into which matrix X is to be factored
+rank = ifdef($rank, 100);
+# File format for all output matrices/vectors
+outputFormat = ifdef($outputFormat, "csv")
+
+# input matrix - (m sanples, n features);
+X = read($fileX);
+
+[w, h] = pnmf(X=X, rnk=rank, verbose=FALSE);
+
+# List of pattern matrices, one for each repetition
+write(w, $fileW, format=outputFormat);
+# List of amplitude matrices, one for each repetition
+write(h, $fileH, format=outputFormat);
+

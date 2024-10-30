@@ -1,0 +1,12 @@
+{
+    "data_type": "matrix",
+    "value_type": "double",
+    "rows": 10000,
+    "cols": 10,
+    "nnz": 100000,
+    "format": "csv",
+    "author": "lachezarnikolov",
+    "header": false,
+    "sep": ",",
+    "created": "2024-10-23 18:06:02 CEST"
+}
