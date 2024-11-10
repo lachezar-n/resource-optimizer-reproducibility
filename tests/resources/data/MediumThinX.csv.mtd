@@ -1,0 +1,12 @@
+{
+    "data_type": "matrix",
+    "value_type": "double",
+    "rows": 2500000,
+    "cols": 2500,
+    "nnz": 6250000000,
+    "format": "csv",
+    "author": "ec2-user",
+    "header": false,
+    "sep": ",",
+    "created": "2024-11-08 14:20:24 UTC"
+}

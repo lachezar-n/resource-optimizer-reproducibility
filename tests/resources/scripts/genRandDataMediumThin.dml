@@ -1,0 +1,12 @@
+# This script generate the medium (M) input datasets for the experiments for:
+# - PCA.dml - expected inputs matrix X (m,n)
+#
+# The S dataset is defined as X matrix of size ~ 50GB
+# and dimensions m=2500000; n=2500
+
+outputFormat = ifdef($outputFormat, "csv");
+fileX = $outputDir + "thinMediumX.csv";
+
+X = rand(rows=2500000, cols=2500);
+
+write(X, fileX, format=outputFormat);

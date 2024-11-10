@@ -15,7 +15,8 @@ import java.io.FileReader;
 import java.util.HashMap;
 
 public class ResourceTestUtils {
-    public static final String DEFAULT_INSTANCE_INFO_TABLE = "./systemds/scripts/resource/ec2_stats.csv";
+    public static final String DEFAULT_INSTANCE_INFO_TABLE = "./ec2_stats.csv";
+//    public static final String DEFAULT_INSTANCE_INFO_TABLE = "scaled_ec2_stats.csv";
 
     public static Program compileProgramWithNvargs(String scriptPath, HashMap<String, String> nvargs) {
         Program returnProgram;

@@ -27,6 +27,8 @@ import static external.ResourceTestUtils.DEFAULT_INSTANCE_INFO_TABLE;
 public class PuneBasedEnumerationValidationTests {
     static {
         ConfigurationManager.getCompilerConfig().set(CompilerConfig.ConfigType.RESOURCE_OPTIMIZATION, true);
+        Enumerator.setCpuQuota(300);
+        Enumerator.setCostsWeightFactor(0.002);
     }
     private static final String TEST_DIR = "./tests/";
     private static final String SCRIPTS_DIR = TEST_DIR + "resources/scripts/";
@@ -34,7 +36,6 @@ public class PuneBasedEnumerationValidationTests {
     private static HashMap<String, CloudInstance> allInstances;
 
     // Further relevant enumeration setting
-    private static final Enumerator.OptimizationStrategy objectiveFunction = Enumerator.OptimizationStrategy.MinPrice;
     private static final int maxNumberExecutors = -1; // -1 fro setting no limit
 
     @BeforeClass
@@ -49,180 +50,623 @@ public class PuneBasedEnumerationValidationTests {
     // L2SVM
 
     @Test
-    public void L2SSVMDefaultTest() {
+    public void L2SSVMDefaultMinCostsTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
         nvargs.put("$fileX", DATA_DIR+"DefaultX.csv");
         nvargs.put("$fileY", DATA_DIR+"DefaultY.csv");
         nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        runTest("L2SVM.dml", nvargs);
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
     }
 
     @Test
-    public void L2SSVMSmallInputTest() {
-        HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"SmallDenseX.csv");
-        nvargs.put("$fileY", DATA_DIR+"SmallY.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        runTest("L2SVM.dml", nvargs);
-    }
+    public void L2SSVMDefaultMinPriceTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
 
-    @Test
-    public void L2SSVMMediumInputTest() {
-        HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"MediumDenseX.csv");
-        nvargs.put("$fileY", DATA_DIR+"MediumY.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        runTest("L2SVM.dml", nvargs);
-    }
-
-    @Test
-    public void L2SSVMLargeInputTest() {
-        HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"LargeDenseX.csv");
-        nvargs.put("$fileY", DATA_DIR+"LargeY.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        runTest("L2SVM.dml", nvargs);
-    }
-
-    //Linreg
-
-    @Test
-    public void LinregDefaultTest() {
         HashMap<String, String> nvargs = new HashMap<>();
         nvargs.put("$fileX", DATA_DIR+"DefaultX.csv");
         nvargs.put("$fileY", DATA_DIR+"DefaultY.csv");
         nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        runTest("Linreg.dml", nvargs);
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
     }
 
     @Test
-    public void LinregSmallDenseTest() {
+    public void L2SSVMDefaultMinTimeTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"SmallDenseX.csv");
-        nvargs.put("$fileY", DATA_DIR+"SmallY.csv");
+        nvargs.put("$fileX", DATA_DIR+"DefaultX.csv");
+        nvargs.put("$fileY", DATA_DIR+"DefaultY.csv");
         nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        runTest("Linreg.dml", nvargs);
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
     }
 
     @Test
-    public void LinregMediumTest() {
+    public void L2SSVMSmallInputMinCostsTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"MediumDenseX.csv");
-        nvargs.put("$fileY", DATA_DIR+"MediumY.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        runTest("Linreg.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "SmallY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
     }
 
     @Test
-    public void LinregLargeInputTest() {
+    public void L2SSVMSmallInputMinPriceTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"LargeDenseX.csv");
-        nvargs.put("$fileY", DATA_DIR+"LargeY.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        runTest("Linreg.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "SmallY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void L2SSVMSmallInputMinTimeTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "SmallY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void L2SSVMMediumInputMinCostsTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "MediumY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void L2SSVMMediumInputMinPriceTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "MediumY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void L2SSVMMediumInputMinTimeTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "MediumY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void L2SSVMLargeInputMinCostsTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "LargeY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void L2SSVMLargeInputMinPriceTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "LargeY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void L2SSVMLargeInputMinTimeTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "LargeY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("L2SVM.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    // Linreg
+
+    @Test
+    public void LinregDefaultMinCostsTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileY", DATA_DIR + "DefaultY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void LinregDefaultMinPriceTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileY", DATA_DIR + "DefaultY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void LinregDefaultMinTimeTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileY", DATA_DIR + "DefaultY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void LinregSmallDenseMinCostsTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "SmallY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void LinregSmallDenseMinPriceTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "SmallY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void LinregSmallDenseMinTimeTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "SmallY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void LinregMediumMinCostsTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "MediumY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void LinregMediumMinPriceTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "MediumY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void LinregMediumMinTimeTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "MediumY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void LinregLargeInputMinCostsTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "LargeY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void LinregLargeInputMinPriceTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "LargeY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void LinregLargeInputMinTimeTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileY", DATA_DIR + "LargeY.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        runTest("Linreg.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
     }
 
     // PCA
     @Test
-    public void PCADefaultTest() {
+    public void PCADefaultMinCostsTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"DefaultX.csv");
-        nvargs.put("$fileXReduced", DATA_DIR+"DummyOutputX.csv");
-        nvargs.put("$fileC", DATA_DIR+"DummyOutputC.csv");
-        nvargs.put("$fileC2", DATA_DIR+"DummyOutputC2.csv");
-        nvargs.put("$fileS2", DATA_DIR+"DummyOutputS2.csv");
-        runTest("PCA.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
     }
 
     @Test
-    public void PCASmallTest() {
+    public void PCADefaultMinPriceTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"SmallDenseX.csv");
-        nvargs.put("$fileXReduced", DATA_DIR+"DummyOutputX.csv");
-        nvargs.put("$fileC", DATA_DIR+"DummyOutputC.csv");
-        nvargs.put("$fileC2", DATA_DIR+"DummyOutputC2.csv");
-        nvargs.put("$fileS2", DATA_DIR+"DummyOutputS2.csv");
-        runTest("PCA.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
     }
 
     @Test
-    public void PCAMediumTest() {
+    public void PCADefaultMinTimeTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"MediumDenseX.csv");
-        nvargs.put("$fileXReduced", DATA_DIR+"DummyOutputX.csv");
-        nvargs.put("$fileC", DATA_DIR+"DummyOutputC.csv");
-        nvargs.put("$fileC2", DATA_DIR+"DummyOutputC2.csv");
-        nvargs.put("$fileS2", DATA_DIR+"DummyOutputS2.csv");
-        runTest("PCA.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
     }
 
     @Test
-    public void PCALargeInputTest() {
-        // input of 100GB
+    public void PCASmallMinCostsTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"LargeDenseX.csv");
-        nvargs.put("$fileXReduced", DATA_DIR+"DummyOutputX.csv");
-        nvargs.put("$fileC", DATA_DIR+"DummyOutputC.csv");
-        nvargs.put("$fileC2", DATA_DIR+"DummyOutputC2.csv");
-        nvargs.put("$fileS2", DATA_DIR+"DummyOutputS2.csv");
-        runTest("PCA.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void PCASmallMinPriceTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void PCASmallMinTimeTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void PCAMediumMinCostsTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void PCAMediumMinPriceTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void PCAMediumMinTimeTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void PCALargeInputMinCostsTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void PCALargeInputMinPriceTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void PCALargeInputMinTimeTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileXReduced", DATA_DIR + "DummyOutputX.csv");
+        nvargs.put("$fileC", DATA_DIR + "DummyOutputC.csv");
+        nvargs.put("$fileC2", DATA_DIR + "DummyOutputC2.csv");
+        nvargs.put("$fileS2", DATA_DIR + "DummyOutputS2.csv");
+        runTest("PCA.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
     }
 
     // PNMF
 
     @Test
-    public void PNMFDefaultTest() {
+    public void PNMFDefaultMinCostsTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"DefaultX.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        nvargs.put("$fileH", DATA_DIR+"DummyOutputH.csv");
-        runTest("PNMF.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
     }
 
     @Test
-    public void PNMFSmallTest() {
+    public void PNMFDefaultMinPriceTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"SmallDenseX.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        nvargs.put("$fileH", DATA_DIR+"DummyOutputH.csv");
-        runTest("PNMF.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
     }
 
     @Test
-    public void PNMFMediumTest() {
+    public void PNMFDefaultMinTimeTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"MediumDenseX.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        nvargs.put("$fileH", DATA_DIR+"DummyOutputH.csv");
-        runTest("PNMF.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "DefaultX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
     }
 
     @Test
-    public void PNMFLargeInputTest() {
-        // input of 100GB
+    public void PNMFSmallMinCostsTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
         HashMap<String, String> nvargs = new HashMap<>();
-        nvargs.put("$fileX", DATA_DIR+"LargeDenseX.csv");
-        nvargs.put("$fileW", DATA_DIR+"DummyOutputW.csv");
-        nvargs.put("$fileH", DATA_DIR+"DummyOutputH.csv");
-        runTest("PNMF.dml", nvargs);
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void PNMFSmallMinPriceTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void PNMFSmallMinTimeTest() {
+        Enumerator.setMinTime(1000);
+        Enumerator.setMinPrice(1);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "SmallDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void PNMFMediumMinCostsTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void PNMFMediumMinPriceTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void PNMFMediumMinTimeTest() {
+        Enumerator.setMinTime(2000);
+        Enumerator.setMinPrice(2);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "MediumDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
+    }
+
+    @Test
+    public void PNMFLargeInputMinCostsTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinCosts);
+    }
+
+    @Test
+    public void PNMFLargeInputMinPriceTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinPrice);
+    }
+
+    @Test
+    public void PNMFLargeInputMinTimeTest() {
+        Enumerator.setMinTime(4000);
+        Enumerator.setMinPrice(4);
+
+        HashMap<String, String> nvargs = new HashMap<>();
+        nvargs.put("$fileX", DATA_DIR + "LargeDenseX.csv");
+        nvargs.put("$fileW", DATA_DIR + "DummyOutputW.csv");
+        nvargs.put("$fileH", DATA_DIR + "DummyOutputH.csv");
+        runTest("PNMF.dml", nvargs, Enumerator.OptimizationStrategy.MinTime);
     }
 
     // Helpers ---------------------------------------------------------------------------------------------------------
 
-    private void runTest(String scriptFilename, HashMap<String, String> args) {
+    private void runTest(String scriptFilename, HashMap<String, String> args, Enumerator.OptimizationStrategy objectiveFunction) {
         System.out.println("Comparing Grid- vs Pune-based Enumeration strategies with optimization for "
                 + objectiveFunction);
         long startTime, endTime;
         Program program = ResourceTestUtils.compileProgramWithNvargs(SCRIPTS_DIR + scriptFilename, args);
-        Enumerator.setMinTime(100000);
-        Enumerator.setMinTime(1000);
         // grid-based enumerator for expected value generation
         GridBasedEnumerator gridEnumerator = (GridBasedEnumerator) (new Enumerator.Builder())
                 .withRuntimeProgram(program)
                 .withAvailableInstances(allInstances)
                 .withEnumerationStrategy(Enumerator.EnumerationStrategy.GridBased)
                 .withOptimizationStrategy(objectiveFunction)
-                .withNumberExecutorsRange(0, maxNumberExecutors)
                 .build();
         System.out.println("Launching the Grid-Based Enumerator for expected solution");
         startTime = System.currentTimeMillis();
@@ -238,7 +682,6 @@ public class PuneBasedEnumerationValidationTests {
                 .withAvailableInstances(allInstances)
                 .withEnumerationStrategy(Enumerator.EnumerationStrategy.PruneBased)
                 .withOptimizationStrategy(objectiveFunction)
-                .withNumberExecutorsRange(0, maxNumberExecutors)
                 .build();
         System.out.println("Launching the Prune-Based Enumerator for testing solution");
         startTime = System.currentTimeMillis();

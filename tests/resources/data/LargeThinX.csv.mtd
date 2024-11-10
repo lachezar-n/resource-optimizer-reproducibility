@@ -1,0 +1,12 @@
+{
+    "data_type": "matrix",
+    "value_type": "double",
+    "rows": 5000000,
+    "cols": 2500,
+    "nnz": 12500000000,
+    "format": "csv",
+    "author": "hadoop",
+    "header": false,
+    "sep": ",",
+    "created": "2024-11-08 15:12:38 UTC"
+}

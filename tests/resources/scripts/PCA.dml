@@ -1,12 +1,22 @@
 
+# Number of components returned
+K = ifdef($K, 2);
+# Indicator whether or not to center the feature matrix
+center = ifdef($center, TRUE);
+# Indicator whether or not to scale the feature matrix
+scale = ifdef($center, TRUE);
+# Indicator if only the components should be calculated and returned not the application of the components on X
+onlyComponents = ifdef($center, FALSE);
+
+
 # File format for all output matrices/vectors
 outputFormat = ifdef($outputFormat, "csv")
 
-# input matrix - (m sanples, n features);
+# input feature matrix - (m sanples, n features);
 X = read($fileX);
 
 # use always 2 components
-[XReduced, C, C2, S2] = pca(X=X, center=TRUE, scale=TRUE);
+[XReduced, C, C2, S2] = pca(X=X, K=K, center=center, scale=scale, onlyComponents=onlyComponents);
 
 
 # Output feature matrix with K columns

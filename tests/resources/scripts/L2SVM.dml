@@ -1,6 +1,6 @@
 
 # Indicator if a bias column should be added to X and the model
-intercept = ifdef($intercept, 1);
+icpt = ifdef($intercept, 1);
 # Tolerance for early termination if the reduction of objective
 #   function is less than epsilon times the initial objective
 epsilon = ifdef($epsilon, 1e-6);
@@ -16,7 +16,7 @@ X = read($fileX);
 Y = read($fileY);
 
 
-w = l2svm(X=X, Y=Y, intercept=intercept, epsilon=epsilon, reg=reg, maxIterations=maxi);
+w = l2svm(X=X, Y=Y, intercept=icpt, epsilon=epsilon, reg=reg, maxIterations=maxi);
 
 # calculated the weights vector - (n weights, )
 write(w, $fileW, format=formatW);

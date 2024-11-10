@@ -411,7 +411,7 @@ public class EnumeratorsValidationTests {
             ConfigurationManager.setLocalConfig(new DMLConfig());
             System.out.println("Enumerator of type "+strategy.toString()+" launches on full range of instances...");
             Enumerator.setMinTime(100000);
-            Enumerator.setMinTime(1000);
+            Enumerator.setMinPrice(1000);
             Enumerator enumerator = (new Enumerator.Builder())
                     .withRuntimeProgram(program)
                     .withAvailableInstances(allInstances)
